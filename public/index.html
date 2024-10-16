@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Excel Formula Generator</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f7fa;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      flex-wrap: wrap;
+    }
+
+    .card {
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      background-color: #fff;
+      width: 100%;
+      margin: 1rem;
+    }
+
+    .generator-section,
+    .examples-section {
+      flex: 1;
+      max-width: 50%;
+    }
+
+    .examples-section {
+      padding-left: 2rem;
+    }
+
+    h1 {
+      font-weight: 600;
+      color: #333;
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      font-weight: 500;
+      color: #555;
+    }
+
+    textarea {
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 0.75rem;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 5px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #output {
+      font-size: 1.25rem;
+      color: #28a745;
+      font-weight: bold;
+      margin-top: 1.5rem;
+      text-align: center;
+    }
+
+    .error {
+      color: #dc3545;
+    }
+
+    .example {
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .example em {
+      color: #6c757d;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+      .generator-section,
+      .examples-section {
+        max-width: 100%;
+        padding-left: 0;
+      }
+
+      .examples-section {
+        margin-top: 2rem;
+      }
+
+      .card {
+        padding: 1.5rem;
+      }
+
+      textarea {
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Formula Generator Section -->
+    <div class="generator-section">
+      <div class="card">
+        <h1>AI-Powered Excel Formula Generator</h1>
+        <form id="formulaForm">
+          <div class="form-group">
+            <label for="description">Describe what you need:</label>
+            <textarea id="description" rows="4" class="form-control" placeholder="E.g., Sum of values in column A"></textarea>
+          </div>
+          <div class="text-center">
+            <button type="button" class="btn btn-primary" onclick="generateFormula()">Generate Formula</button>
+          </div>
+        </form>
+        <p id="output"></p>
+      </div>
+    </div>
+
+    <!-- Examples Section -->
+    <div class="examples-section">
+      <div class="card">
+        <h2>Examples</h2>
+        <div class="example">
+          <strong>1.</strong> Sum of values in column A<br>
+          <em>=SUM(A:A)</em>
+        </div>
+        <div class="example">
+          <strong>2.</strong> Average of column B<br>
+          <em>=AVERAGE(B:B)</em>
+        </div>
+        <div class="example">
+          <strong>3.</strong> Count non-empty cells in column C<br>
+          <em>=COUNTA(C:C)</em>
+        </div>
+        <div class="example">
+          <strong>4.</strong> Maximum value in column D<br>
+          <em>=MAX(D:D)</em>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS, Popper.js, and jQuery -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- JavaScript -->
+  <script>
+    async function generateFormula() {
+      const description = document.getElementById("description").value;
+      const outputElement = document.getElementById("output");
+
+      outputElement.innerText = "Generating formula...";
+      outputElement.classList.remove("error");
+
+      try {
+        const response = await fetch('http://localhost:3000/generate-formula', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ description })
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to generate formula');
+        }
+
+        const data = await response.json();
+        outputElement.innerText = data.formula || "No formula generated.";
+      } catch (error) {
+        console.error('Error:', error);
+        outputElement.innerText = "Error: Failed to generate formula. Please try again.";
+        outputElement.classList.add("error");
+      }
+    }
+  </script>
+</body>
+
+</html>
